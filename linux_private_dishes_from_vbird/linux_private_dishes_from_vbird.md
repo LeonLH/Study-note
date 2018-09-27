@@ -15,11 +15,15 @@ Wed Sep 26 10:22:37 CST 2018
 	2. UEFI: Unified Extensible Firmware Interface. UEFI搭配GPT开机流程：
 		* UEFI 存放在vfat分区内，UEFI 可以直接读取GPT分区表，GPT分区表可以支持更大的位数，所以主分区的个数可以多余4个。读取完分区表找到bootloader之后，流程与上述流程一样。
 		* GPT: GUID partition table. GUID, 全球唯一标识符。
+
 Thu Sep 27 08:42:47 CST 2018
+
 Tips:
 	1. 挂载：把目录挂在磁盘分区上，要找分区上的内容进入该目录（挂在点）皆可以了。
 	2. 磁盘分区：重要的目录单独作为一个分区，这样当根目录坏掉，比如坏轨时，就和以不影响其他分区的资料。以下是比较重要的目录，必要时候可以给他们单独分区：
 		* /boot / /home /var Swap
+
+
 
 ---
 看到了：首次登入与线上求助。
