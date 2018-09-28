@@ -23,7 +23,9 @@ Tips:
 	2. 磁盘分区：重要的目录单独作为一个分区，这样当根目录坏掉，比如坏轨时，就和以不影响其他分区的资料。以下是比较重要的目录，必要时候可以给他们单独分区：
 		* /boot / /home /var Swap
 
-
-
+Tips: 
+	1. <C-d> means End Of INPUT or End Of File, which is equal to quit/exit;
+	2. <S-PageUp>/<S-PageDown> means pageup/pagedown in terminal;
+	3. `man executivefile` 查看手册，比`executivefile -h/--help` 显示的内容更有可读性, man还可以查看stl容器，比如`man std::vector`；
 ---
-看到了：首次登入与线上求助。
+看到了：4.3.2 man page
