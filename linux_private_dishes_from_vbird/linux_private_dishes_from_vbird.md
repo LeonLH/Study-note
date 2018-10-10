@@ -1,3 +1,5 @@
+This file is the note from learning linux from the linux.vbird.org
+
 Wed Sep 26 10:22:37 CST 2018
 
 # Part1. Linux的规划与安装
@@ -48,7 +50,117 @@ info gdb		//进入info页面，进入之后，N-next，P-previous，U-up
 	6. 资料同步写入硬盘---sync
 
 # Part2 Linux文件/目录与硬盘格式
-## Chap1. Linux文件权限于目录配置
+## Chap6. Linux文件权限于目录配置
+1. 所有者/所属组/密码的记录文件：
+	1. /etc/passwd		记录的是账号
+	2. /etc/shadow		记录的是密码
+	3. /etc/group		记录的是群组
+2. 权限相关命令：
+	1. chgrp	改变文件所属组, -R递归
+	2. chown	改变文件所有者, -R递归, 可以同时修改所有者和所属组两个信息，`chown ownername:groupname filename`
+	3. chmod	改变文件的权限, SUID，SGID，SBIT
+		* `chmod 644 filename`
+		* `chmod u/g/o/a  +/-/= r/w/x`
+3. 目录的写权限，是对目录清单进行修改的权限，即新建/删除/重命名/移动文件的权；目录的执行权限，是是否可以进入该目录；
 
+Tips
+1. 为什么没有写权限的人，还是可以通过强制执行写入内容，只是写之后，文件的所有者变为了执行该操作的人？ 是因为没有写权限，强制写入时，vim会删除原文件，重建同名的文件，然后把内容写入，但是写入之后文件的所有者和所属组就都变成了执行该强制操作的人了。如果不希望此文件被写入或修改，可以将拥有该文件的目录的写权限对操作者禁止，别人删除不了文件也添加不了文件了，也不会发生上述情况。
+2. Linux中的文件是否可以执行和它的文件名没有关系(windows 是用扩展名.exe或其他扩展名来判断文件是否可以执行), Linux中是用x这个权限来判断文件是否时可执行文件的。
 
+4. FHS(Filesystem hierarchy standard)
+	1. `/` :与开机系统有关；
+	2. `/usr`: (unix software resource)与软件安装/执行有关；
+	3. `/var`:（variable）与系统运行过程有关；
+
+##Chap6 Linux档案与目录管理
+1. 几个命令
+```
+head/tail		//取出前几行/后几行
+od 				//非纯文字文件
+cat/tac/nl 		//nl添加行号
+```
+2. 几种时间
+```
+modification time (mtime) 		//内容资料变更时改变
+status time (ctime) 			//权限属性变更时改变
+access time (atime) 			//被访问后改变
+touch d/t/a						//修改上述三种时间
+```
+3. 预设权限与隐藏属性  
+```
+umask 			//预设权限需要减掉的权限值
+chattr			//设定文件隐藏属性
+lsattr			//显示文件隐藏属性
+```
+4. 特殊权限, SUID, SGID, SBIT, 相当于在原本的x权限上提升。
+	1. SUID s权限
+		* SUID仅对二进制文件有效；
+		* 执行者对该文件要有x权限；
+		* 本权限仅在程序的执行过程中有效；
+		* 程序执行过程中，执行者的权限会变成owner的权限；
+	2. SGID s权限
+		* 用于文件时：
+		* SGID仅对二进制文件有效；
+		* 执行者对该文件要有x权限；
+		* 本权限仅在程序的执行过程中有效；
+		* 程序执行过程中，执行这权限会变成group的权限；
+
+		* 用于目录时：
+		* 用途：使用者在本目录有w权限，则使用这在该目录下新建的文件的所属组和目录的所属组相同；
+	3. SBIT (Sticky Bit) ，仅对目录有效。
+		* 当使用者对此目录具有w和x权限时，使用在该目录下新建的文件/目录，仅有自己和root可以删除；
+5. 查看文件属性：`file`
+6. 搜索文件
+	1. `which executablefile`, -a ;		//可执行文件
+	2. `whereis filename`, [-lbmsu];	//在特定目录中寻赵文件 
+	3. `locate [-iclSr];				//在/var/lib/mlocate资料库中查找，带有关键字的资料，可用`updatedb`来更新资料库；
+	4. `find`,超级强大，可以加各种参数来限定查找的文件属性/user/size/权限等，但它是硬扫描，所以时间较慢；
+
+##Chap7 磁盘与文件系统
+1. ext2/ext3/ext4, 从ext3开始支持文件日志功能
+	1. Block Group ---> SuperBlock ---> inode + block
+	2. `dumpe2fs` 查看文件系统的描述资料 
+	3. `blkid` 列出UUID
+	4. `e2fsck` 一致性检查
+2. xfs 不需要预先格式化, inode/block 是在使用的过程中动态产生。
+	1. `xfs_info` 查看文件系统的描述资料
+3. 硬盘与目录的容量du/df
+	1. `df` 列出文件系统的整体硬盘使用量, 对象是disk；
+	2. `du` 评估文件系统的硬盘施用量, 对象是file；
+4. ln 可以做硬链接(hard link)/软链接(symbolic link)
+	1. hard link 实际上就是在目录的block中写入文件名和文件的inode，一般不会造成空间减小，它不可以对目录操作；
+	2. symbolic link 是新建了inode和block，内容相当于文件的绝对路径，它可以看成是windows下的快捷方式，它不可以对目录操作。  
+5. 硬盘分区：
+	1. `lsblk` 列出系统上的所有硬盘列表
+	2. `blkid` 列出UUID
+	3. `parted` 列出硬盘的分区类型和分区信息
+	4. 分区：gdisk(for GPT)/fdisk(for MBR)
+	5. `partprobe` 更新Linux核心的分区信息(/proc/partitions), 避免重启；
+	6. `mkfs` make filesystem 综合指令，具体哪种文件系统，还需要进一步确定，使用对应的指令，如`mkfs.xfs` `mkfs.ext4`,etc. 
+6. 文件系统检验
+	1. `xfs_repair` 处理XFS文件系统；
+	2. `fsck.ext4` 处理EXT4文件系统；
+7. 挂载与卸载 mount/umount
+	1. 开机自动挂载，实际上就是在/etc/fstab文件中写入特定的分区信息，开机的时候，系统会检查fstab，根据它来挂载。此外，使用`mount -a`也会根据/etc/fstab来挂载；
+	2. 挂载DVD映象文件, `mount -o loop /tmp/CentOS-7.0-14.06_64-DVD.iso /data/centos_dvd`, 利用`mount loop`; 
+	3. 制作loop文件，并将loop格式化为文件系统，最后将它挂载，这样就类似于一个新的分区(实际上不是, 只是loop文件); 
+	```
+	dd if=/dev/zero of=/srv/loopdev bs=1M count=512		//建立一个大块
+	mkfs.xfs -f /srv/loopdev							//格式化
+	blkid /srv/loopdev
+	mount -o loop UUID="xxx" /mnt 						//挂载
+	df /mnt
+	```
+
+8. 不论分区表是GPT还是MBR都可以进行分区的工具，`parted` 它是非非交互式的，而fdisk/gdisk是交互式的，所以parted可以用来脚本文件中一次性建立很多分区；
+
+##Chap8 文件的压缩与打包
+
+8
 ---
+##Chap9 vim
+1. dos2unix/unix2dos, DOS下换行是CRLF，Linux下是LF，所以需要转换。
+
+##Chap10 认识与学习BASH
+1. 
+
