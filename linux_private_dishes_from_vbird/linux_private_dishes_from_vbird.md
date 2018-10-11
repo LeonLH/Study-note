@@ -154,7 +154,7 @@ lsattr			//显示文件隐藏属性
 
 8. 不论分区表是GPT还是MBR都可以进行分区的工具，`parted` 它是非非交互式的，而fdisk/gdisk是交互式的，所以parted可以用来脚本文件中一次性建立很多分区；
 
-##Chap8 文件的压缩与打包
+## Chap8 文件的压缩与打包
 1. 压缩文档的格式： *.tar, *.tar.gz, *.tgz, *.gz, *.Z, *.bz2, *.xz; 
 2. 压缩软件： gzip, bzip2, xz, 打包： tar; 
 	1. gzip, -d 解压, zcat/zmore/zless/zgrep无需解压对压缩文件操作;
@@ -164,7 +164,7 @@ lsattr			//显示文件隐藏属性
 		* 压缩：`tar -jcv -f filename`;
 		* 
 
-PS: 
+PS:  
 	1. `time` 可以列出命令运行时间；
 8
 ---
