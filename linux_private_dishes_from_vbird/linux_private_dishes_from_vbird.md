@@ -161,16 +161,159 @@ lsattr			//显示文件隐藏属性
 	2. bzip2,-d 解压, bzcat/bzmore/bzless/bzgrep, 同上；
 	3. xz,   -d 解压，xzcat/xzmore/xzless/xzgrep, 同上；
 	4. tar 打包：
-		* 压缩：`tar -jcv -f filename`;
-		* 
+		* 压缩：			`tar -jcv -f filename`;
+		* 查看tar包中文件：	`tar -jtv -f filename.tar.bz2`;
+		* 解压：			`tar -jxv -f filename.tar.bz2` -C directoryname`;
+		* 上述j代表bz，可换为z/J，z代表gzip，J代表xz, 主要差异是在压缩比和时间上，一般来说，压缩比越大，时间越长；
+		```
+time tar -zpcv -f /root/etc.tar.gz  /etc
+time tar -jpcv -f /root/etc.tar.bz2 /etc
+time tar -Jpcv -f /root/etc.tar.xz  /etc 
+		```
+		* 仅解压tar压缩包中单个文件：
+		```
+tar -jtv -f /root/etc.tar.bz2 |grep 'shadow'	//查看包含shadow的文件
+tar -jxv -f /root/etc.tar.bz2 etc/shadow 		//解压单个文件
+		```
+		* 几个参数：
+			不包含某个目录：--exclude=filename(可以有路径)
+			仅备份比某时刻更新的文件：--newer-mtime --newer(包含mtime和ctime)
+			将资料流一边打包一边压缩到目标目录里去
+
+3. 文件系统的备份与还原(xfs文件系统为例)
+	1. 备份：xfsdump, 累计备份(incremental backups)
+	2. 还原：xfsrestore
+4. 制作映像文件
+	1. 普通iso文件：	`mkisofs`
+	2. 可开机ios文件：
+	3. 光碟烧录工具：	`cdrecord/wodim`
+5. 其他压缩与备份工具：
+	1. dd, 可以将磁盘上的superblock/boot sector/meta data通通复制到目标文件中，因此不需要格式化。可以用来完整的备份磁盘。
+`dd if="input_file" of="output_file" bs="block_size" count="number"`
+	
+	2. cpio, 相当优秀的备份指令，不过需要搭配find类似指令读入要备份的文件名：
+	```
+cpio -ovcB  > [file|device] 		//备份
+cpio -ivcdu < [file|device]			//还原
+cpio -ivct  < [file|device] 		//查看
+	```
 
 PS:  
 	1. `time` 可以列出命令运行时间；
-8
----
+
+
 ##Chap9 vim
 1. dos2unix/unix2dos, DOS下换行是CRLF，Linux下是LF，所以需要转换。
 
+
 ##Chap10 认识与学习BASH
-1. 
+1. alias lm='ls -al' How to make it work every time restart host? 
+2. 显示变量：`echo $variablename` 
+3. 变量设定规则：
+	1. =； 
+	2. =两端不能有空格；
+	3. 开头不能是空格；
+	4. 单引号/双引号：
+		* 双引号保留原特性,具有变量置换功能；
+		* 单引号内仅仅是字符串，不具有变量置换功能；
+	5. \ 转义字符将特殊符号变为普通符号；
+	6. `指令` 或 $(指令) 可以返回指令的结果, 例如：
+	```
+		version=$(uname -r)
+		或 version=`uname -r`
+	```
+	7. 扩增变量内容，用 "$变量名" 或 ${变量}, 例如：
+		`PATH="$PATH":/home/bin` 或 `PATH=${PATH}:/home/bin`
+	8. 以export把变量变成环境变量：`export PATH`;
+	9. 大写系统变量，小写自定义变量；
+	10. 取消变量：`unset variablename`;
+4. 列出
+	1. env 列出环境变量；
+	2. set 列出所有变量；
+	3. 子进程会继承父进程的环境遍历，但不会继承父进程的自定义变量，此时就可以使用，`export  variablename` 来把自己的变量分享给后来调用的子进程。而且设置完成后，关于语系的设定还是要，好好学习操作一番才能理解，暂时不用着急着设定成为中文。另外，要熟练英文的书写，多练习，慢慢地要有用英文书写交流的能力，不改成中文也可以比较好的英文学习环境。
+5. 变量的读取/数组/声明；
+	1. `read [-tp] variable`				//读取变量
+	2. `declare/typeset [-aixr] variable`	//声明变量类型, -/+x可以设定取消成为环境变量，-r只读，-p可以列出
+6. 限定bash使用者使用的资源(可打开的文件数/大小，CPU，RAM)，ulimit:
+7. 变量的删除/取代/替换：
+	1. 删除：`${variable#/*local/bin}`;		// # 表示从左到右删除最短的那个相匹配的，## 表示从左到右删除最长的匹配的，%/%% 表示从右到左删除最短/最长的
+	2. 取代：`echo ${path/sbin/SBIN}`;		// 如果path和sbin之间是两条斜线，则所有符合的条件都会被取代
+	3. 判断设定默认值：
+	```
+`username=${username-root}`		// 如果没有被设定则username默认为root
+`username=${username:-root}`	// 变量为空或者未设定，都以默认为值
+	```
+8. 别名, 别名的设定与变量的设定基本是一样的
+	1. `alias aliasname=command`		//set alias
+	2. `unalias aliasname`				//unset alias
+9. 历史命令 history
+	1. `!command` 由最近的指令开始向上搜索第一个以command开头的指令并执行；
+10. Login-shell, Load after login with tty1-tty6. Non-login shell load by exist bash calling. 
+11. Ubuntu's directory is a little different from CentOS's, so if you don't find files in ubuntu which it exist in CentOS, Try `ls | grep keyword` and then read the relative manual. 
+12. Configuration of bash:
+	1. /etc/profile /etc/profile.d/ /etc/locale.conf
+	2. ~/.bash_profile  ~/.bash_login ~/.bashrc /etc/bashrc ~/.profile
+	3. `source conf_file` loading the configuration
+13. Login-shell will read above file as sequence, Non-login-shell will only load the ~/.bashrc
+14. Put the right info and error info into one file by using `2>&1 file` or `&>`;
+15. 管道符后面的指令是要能接收 standard input 才可以，例如，less/more/head/tail
+16. 一些常用工具：
+	* cut  -d|-f|-c ;						//截断
+	* grep -a|-c|-i|-n|-v|--color=auto ; 	//筛选
+	* sort -f|-b|-M|-n|-r|-u|-t|-k ;		//排序
+	* uniq -i|-c ;							//去重
+	* wc   -l|-w|-m ;						//统计
+	* tee  -a ;								//双向重定向
+17. 字元转换命令：
+	* tr   -d|-s SET1; 						//删除或替换
+	* col  -x|-b 							//TAB->空白
+	* join -t|-i|-1|-2; 					//合并两个有相关性的文本
+	* paste -d file1 file2; 				//直接粘贴在后面，TAB隔开
+	* expand -t 							//TAB->N个空白
+	* split -b|-l file PREFIX				//分割文件
+	* xargs -O|-e|-p|-n command				//把文本分隔处理后，传给命令，可以实现一次传一个(几个)参数给名令
+	* 减号 - 某些命令中可以代替stdin和stdout
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Note:
+> type -a ls 		// 查看ls的指令执行顺序
+>
+> /etc/issue 中记录着，登陆之前显示的信息，可以修改成各种格式（如，时间，本机版本等）;
+>
+> /etc/motd 记录着上述类似信息，只不过是出现在远程登陆端的显示界面上；
+
+
+
+
+
+---
+Above 10.5.2
+ 
+
 
