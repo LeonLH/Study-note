@@ -254,17 +254,18 @@ PS:
 	1. /etc/profile /etc/profile.d/ /etc/locale.conf
 	2. ~/.bash_profile  ~/.bash_login ~/.bashrc /etc/bashrc ~/.profile
 	3. `source conf_file` loading the configuration
+
 13. Login-shell will read above file as sequence, Non-login-shell will only load the ~/.bashrc
 14. Put the right info and error info into one file by using `2>&1 file` or `&>`;
 15. 管道符后面的指令是要能接收 standard input 才可以，例如，less/more/head/tail
-16. 一些常用工具：
+16. 管道相关命令——常用工具：
 	* cut  -d|-f|-c ;						//截断
-	* grep -a|-c|-i|-n|-v|--color=auto ; 	//筛选
+	* grep -a|-c|-i|-n|-v|--color=auto ; 	//筛选，整行
 	* sort -f|-b|-M|-n|-r|-u|-t|-k ;		//排序
 	* uniq -i|-c ;							//去重
 	* wc   -l|-w|-m ;						//统计
 	* tee  -a ;								//双向重定向
-17. 字元转换命令：
+17. 管道相关命令——字元转换命令：
 	* tr   -d|-s SET1; 						//删除或替换
 	* col  -x|-b 							//TAB->空白
 	* join -t|-i|-1|-2; 					//合并两个有相关性的文本
@@ -274,34 +275,9 @@ PS:
 	* xargs -O|-e|-p|-n command				//把文本分隔处理后，传给命令，可以实现一次传一个(几个)参数给名令
 	* 减号 - 某些命令中可以代替stdin和stdout
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Note:
+> Note: Practice above command till I master it to a high level. 
+> 
 > type -a ls 		// 查看ls的指令执行顺序
 >
 > /etc/issue 中记录着，登陆之前显示的信息，可以修改成各种格式（如，时间，本机版本等）;
@@ -310,10 +286,148 @@ Note:
 
 
 
+## Chap11. 正则表达式与文件格式化处理
+0. Rex是以行为单位处理字符串的，Rex的练习要通过支持它的工具来练习，需要多练习思考这些工具的功能和作用，以及他们组合实现的功能和作用；
+1. [] 来搜索集合，例如，[a-z], [[:digit:]]...
+2. ^ 在[]之内和在它之外是不同的，在里面表示反向选择，在外面表示以集合内某个字符开头；
+3. . 代表任意字符，不能是空； * 代表前一个字符重复任意次，可以为零次；
+4. 字的长度范围{}, e.x. `o\{5,8\}` 表示o重复了5到8次；
+5. Learn the basic usage and find some exercises to practise to make me master it to a very high level. 
+6. [Prac] sed (stream editor): sed [-n|e|f|r|i] [a|c|d|i|p|s] 需要掌握,通常用于一整行一整行的处理；
+7. [Prac] awk '条件类型1{动作1};条件类型2{动作2}...' filename
+	* 以行为一次处理的单位，以栏位为最小处理的单位
+	* 变量：$0, $1, $2, $3...,NF, NR, FS, ..., BEGIN, END, ...
+	* 逻辑运算字符：> < >= <= == != 
+	* 注意每个动作与下一个条件之间的分号
+8. 档案对比工具：diff | cmp
+	1. diff [-b|B|i] from-file to-file 结果中：
+		* c substitute
+		* d delete
+		* a addnew
+		* < left-file
+		* > right-file
+	2. cmp [-l] file1 file2, 对比的单位是位，diff对比的单位是行。
+	3. patch [-R|p] < patch-file, 根据更新包把内容从旧内容更新成新内容，或者把新内容根据更新包还原成旧的内容：
+		* diff -Naur passwd.old passwd.new > passwd.patch 	//make update patch
+		* patch -pN < patch-file		//Update old file to new file according to patch file
+		* patch -R -pN < patch-file		//Reverse old file according to patch file
+		* the file should be named as file.old file.new file.patch
+9. 文件打印准备：例如，列出每页的页码，时间等信息。`pr`
 
+Note:
+> 本章内容要多练，管道符grep/sed等工具的配合使用，还有Rex的语法规则，上述内容只有通过多次练习才能逐步掌握。
 
----
-Above 10.5.2
- 
+## Chap12 学习Shell Script
 
+1. 管理一部主机的工作：
+	* 查询登陆文件；
+	* 追踪流量；
+	* 监控使用者使用主机状态；
+	* 主机各项硬件设备状态；
+	* 主机软件更新查询；
+	* 使用的其他突然要求；
+2. 程序的基本资料：
+	* 内容与功能；
+	* 版本信息；
+	* 作者联系方式；
+	* 文件创建日期；
+	* 历史记录；
+	* 等
+3. 环境变量的设置：PATH 和 LANG
+4. 运算：`var=$((运算内容))`
+5. 利用source执行脚本是在父程序中执行，而相对/绝对路径或bash filename的方法是调用一个新的bash，在该子bash下执行。
+6. [D] SGID review;
+7. test 判断文件类型/权限/更新时间/两个整数大小/字符串/多重判断
+	* 文件类型：	-e|-f|-d|-b|-c|-S|-p|-L
+	* 权限：		-r|-w|-x|-u|-g|-k|-s
+	* 更新时间：	-nt|-ot|-ef
+	* 两整数大小：	-eq|-ne|-gt|-lt|-ge|-le
+	* 字符串：		-z|-n|==|!=
+	* 多重判断：	-a|-o|!
+8. 判断符[]
+	* 中括号内每个元件都需要有空白键来分隔；
+	* 中括号内变量，最好用双引号括起来；
+	* 中括号内常数，最好以单或双引号括起来；
+9. 预设变量：
+	* /path/to/scriptname 	: $0
+	* op1					: $1
+	* op2					: $2
+	* op3					: $3
+	* op4					: $4
+	* $# | $@ | $* 			: *******
+	* shift					: 参数偏移
+10. 条件判断式，注意每个关键词(if, else...)之后有空格
+	1. if ... fi
+```
+if [条件判断式]; then
+	语句
+else if [条件判断式]; then
+	语句
+else
+	语句
+fi
 
+```
+	2. case ... esac
+	```
+case $变量 in
+"value1")
+	语句
+	;;
+"value2")
+	语句
+	;;
+"value3")
+	语句
+	;;
+*)
+	语句
+	exit 1
+	;;
+esac
+
+	```
+	3. function, 由于shell脚本是从上到下执行的，所以函数要写在调用之前
+
+```
+	function funcname(){
+		语句
+	}
+```
+
+	4. 循环: while do done(非固定循环), until do done(非固定循环), for...do...done(固定循环)
+
+	```
+while [条件]	# 条件满足进入循环 
+do
+	语句
+done
+	```
+
+	```
+until [条件]	# 条件满足跳出循环
+do
+	语句
+done
+	```
+
+	```
+for var in con1 con2 con3 ...	# $(seq 1 100) OR {1..100}
+do
+	语句
+done
+	```
+
+	```
+for ((init; condition; step length))
+do
+	Statement
+done
+	```
+
+11. Debug
+	1. sh -n|-v|-x scriptname
+
+Note: 学习脚本需要多看，多模仿，多修改别人的脚本，才会学习的快
+
+12.  
