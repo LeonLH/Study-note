@@ -155,6 +155,7 @@ lsattr			//显示文件隐藏属性
 8. 不论分区表是GPT还是MBR都可以进行分区的工具，`parted` 它是非非交互式的，而fdisk/gdisk是交互式的，所以parted可以用来脚本文件中一次性建立很多分区；
 
 ## Chap8 文件的压缩与打包
+
 1. 压缩文档的格式： *.tar, *.tar.gz, *.tgz, *.gz, *.Z, *.bz2, *.xz; 
 2. 压缩软件： gzip, bzip2, xz, 打包： tar; 
 	1. gzip, -d 解压, zcat/zmore/zless/zgrep无需解压对压缩文件操作;
@@ -239,25 +240,34 @@ PS:
 	1. 删除：`${variable#/*local/bin}`;		// # 表示从左到右删除最短的那个相匹配的，## 表示从左到右删除最长的匹配的，%/%% 表示从右到左删除最短/最长的
 	2. 取代：`echo ${path/sbin/SBIN}`;		// 如果path和sbin之间是两条斜线，则所有符合的条件都会被取代
 	3. 判断设定默认值：
+
 	```
 `username=${username-root}`		// 如果没有被设定则username默认为root
 `username=${username:-root}`	// 变量为空或者未设定，都以默认为值
 	```
+
 8. 别名, 别名的设定与变量的设定基本是一样的
 	1. `alias aliasname=command`		//set alias
 	2. `unalias aliasname`				//unset alias
+
 9. 历史命令 history
 	1. `!command` 由最近的指令开始向上搜索第一个以command开头的指令并执行；
+
 10. Login-shell, Load after login with tty1-tty6. Non-login shell load by exist bash calling. 
+
 11. Ubuntu's directory is a little different from CentOS's, so if you don't find files in ubuntu which it exist in CentOS, Try `ls | grep keyword` and then read the relative manual. 
+
 12. Configuration of bash:
 	1. /etc/profile /etc/profile.d/ /etc/locale.conf
 	2. ~/.bash_profile  ~/.bash_login ~/.bashrc /etc/bashrc ~/.profile
 	3. `source conf_file` loading the configuration
 
 13. Login-shell will read above file as sequence, Non-login-shell will only load the ~/.bashrc
+
 14. Put the right info and error info into one file by using `2>&1 file` or `&>`;
+
 15. 管道符后面的指令是要能接收 standard input 才可以，例如，less/more/head/tail
+
 16. 管道相关命令——常用工具：
 	* cut  -d|-f|-c ;						//截断
 	* grep -a|-c|-i|-n|-v|--color=auto ; 	//筛选，整行
@@ -430,4 +440,21 @@ done
 
 Note: 学习脚本需要多看，多模仿，多修改别人的脚本，才会学习的快
 
-12.  
+## Chap13 Linux账号管理与ACL权限
+
+1. 加入群组，只需要在/etc/group的对应群组的行的最后一项上添加上要加入的用户名即可；加入之后，要切换(newgrp)到支持的群组才能进行相关的操作，切换群组；
+2. 账号管理：useradd/passwd/usermod/userdel
+	* useradd 在建立账号的时候至少会参考：/etc/default/useradd /etc/login.defs /etc/skel/*
+	* useradd is a low level method of create a user, Instead, adduser/deluser are more higher level.
+	* chage 修改密码的详细参数
+	* usermod 账号资料的微调
+	* id
+	* finger/chfn(change finger)/chsh(change shell)
+3. 添加与移除群组
+	* groupadd/groupmod/groupdel
+	* gpasswd
+`echo user1:passwd | /usr/sbin/chpasswd`	--- change password without get into interactive mode. 
+
+4. acl
+	* `setfacl [-bkRd] [{-m|-x} acl parameter] file/directoryname`
+	* getfacl filename
