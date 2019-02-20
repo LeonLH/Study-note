@@ -241,10 +241,10 @@ PS:
 	2. 取代：`echo ${path/sbin/SBIN}`;		// 如果path和sbin之间是两条斜线，则所有符合的条件都会被取代
 	3. 判断设定默认值：
 
-	```
+```
 `username=${username-root}`		// 如果没有被设定则username默认为root
 `username=${username:-root}`	// 变量为空或者未设定，都以默认为值
-	```
+```
 
 8. 别名, 别名的设定与变量的设定基本是一样的
 	1. `alias aliasname=command`		//set alias
@@ -297,6 +297,7 @@ Note:
 
 
 ## Chap11. 正则表达式与文件格式化处理
+
 0. Rex是以行为单位处理字符串的，Rex的练习要通过支持它的工具来练习，需要多练习思考这些工具的功能和作用，以及他们组合实现的功能和作用；
 1. [] 来搜索集合，例如，[a-z], [[:digit:]]...
 2. ^ 在[]之内和在它之外是不同的，在里面表示反向选择，在外面表示以集合内某个字符开头；
@@ -317,10 +318,10 @@ Note:
 		* < left-file
 		* > right-file
 	2. cmp [-l] file1 file2, 对比的单位是位，diff对比的单位是行。
-	3. patch [-R|p] < patch-file, 根据更新包把内容从旧内容更新成新内容，或者把新内容根据更新包还原成旧的内容：
-		* diff -Naur passwd.old passwd.new > passwd.patch 	//make update patch
-		* patch -pN < patch-file		//Update old file to new file according to patch file
-		* patch -R -pN < patch-file		//Reverse old file according to patch file
+	3. `patch [-R|p] < patch-file`, 根据更新包把内容从旧内容更新成新内容，或者把新内容根据更新包还原成旧的内容：
+		* `diff -Naur passwd.old passwd.new > passwd.patch` 	//make update patch
+		* `patch -pN < patch-file`			//Update old file to new file according to patch file
+		* `patch -R -pN < patch-file`		//Reverse old file according to patch file
 		* the file should be named as file.old file.new file.patch
 9. 文件打印准备：例如，列出每页的页码，时间等信息。`pr`
 
@@ -398,42 +399,40 @@ esac
 
 	```
 	3. function, 由于shell脚本是从上到下执行的，所以函数要写在调用之前
-
 ```
 	function funcname(){
 		语句
 	}
 ```
-
 	4. 循环: while do done(非固定循环), until do done(非固定循环), for...do...done(固定循环)
 
-	```
+```
 while [条件]	# 条件满足进入循环 
 do
 	语句
 done
-	```
+```
 
-	```
+```
 until [条件]	# 条件满足跳出循环
 do
 	语句
 done
-	```
+```
 
-	```
+```
 for var in con1 con2 con3 ...	# $(seq 1 100) OR {1..100}
 do
 	语句
 done
-	```
+```
 
-	```
+```
 for ((init; condition; step length))
 do
 	Statement
 done
-	```
+```
 
 11. Debug
 	1. sh -n|-v|-x scriptname
@@ -458,3 +457,11 @@ Note: 学习脚本需要多看，多模仿，多修改别人的脚本，才会�
 4. acl
 	* `setfacl [-bkRd] [{-m|-x} acl parameter] file/directoryname`
 	* getfacl filename
+
+Note: Chap13 未完待续
+
+## Chap14 磁盘配额与进阶文件系统管理
+1.  
+
+
+
