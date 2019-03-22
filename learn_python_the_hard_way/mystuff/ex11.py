@@ -1,5 +1,5 @@
 print "How old are you?",
-age = raw_input('--->')
+age = raw_input()
 print "How tall are You?",
 height = raw_input('***')
 print "How much do you weigh?",

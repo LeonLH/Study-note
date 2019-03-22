@@ -1,2 +1,5 @@
-Flo = PI
-print "%g" % Flo
+# This is test for file.truncate()
+txt = open("test.txt", 'r+w')
+# txt.truncate(20);
+line = txt.readline();
+print line
